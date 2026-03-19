@@ -6,7 +6,7 @@
     "build": {
         "type": "docker",
         "docker": {
-            "file": "./web/Dockerfile",
+            "file": "./Dockerfile",
             "context": "./web"
         }
     },
