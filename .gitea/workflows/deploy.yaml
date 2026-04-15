@@ -1,0 +1,33 @@
+name: Build and Deploy to Swarm
+on:
+  push:
+    branches: [release, staging, develop]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    # Используем образ с предустановленным Docker CLI
+    container:
+      image: catthehacker/ubuntu:act-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Gitea Registry
+        run: echo "${{ secrets.REGISTRY_TOKEN }}" | docker login ${{ gitea.server_url }} -u ${{ gitea.actor }} --password-stdin
+
+      - name: Build and Push Image
+        run: |
+          IMAGE_NAME=${{ gitea.server_url }}/${{ gitea.repository }}:latest
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
+
+      - name: Update Docker Swarm Service
+        run: |
+          # Обновление существующего сервиса новым образом
+          # --with-registry-auth позволяет узлам Swarm скачивать образ из приватного реестра
+          docker service update \
+            --image ${{ gitea.server_url }}/${{ gitea.repository }}:latest \
+            --with-registry-auth \
+            my_swarm_service_name
+

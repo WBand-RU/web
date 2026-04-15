@@ -1,18 +1,22 @@
-import { defineConfig } from "orval"
+import { defineConfig, OptionsExport } from "orval";
 
-export default defineConfig({
-  bandsService: {
+function getConfig(
+  baseUrl: string,
+  inputTarget: string,
+  serviceName: string,
+): OptionsExport {
+  return {
     input: {
-      target: "https://bands-api.staging.wband.ru/openapi.json",
+      target: `${baseUrl}${inputTarget}`,
     },
     output: {
-      target: "src/lib/api/generated/bands-service.ts",
-      schemas: "src/lib/api/generated/model",
+      target: `src/lib/generated/${serviceName}/api-client.ts`,
+      schemas: `src/lib/generated/${serviceName}/model`,
       client: "fetch",
       mode: "split",
-      baseUrl: "https://bands-api.staging.wband.ru",
+      baseUrl,
       clean: true,
-      prettier: false,
+      formatter: "prettier",
       override: {
         fetch: {
           includeHttpResponseReturnType: false,
@@ -23,5 +27,13 @@ export default defineConfig({
         },
       },
     },
-  },
-})
+  };
+}
+
+export default defineConfig({
+  bandsService: getConfig(
+    "https://bands-api.staging.wband.ru",
+    "/openapi.json",
+    "bands-service.ts",
+  ),
+});
