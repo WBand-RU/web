@@ -44,11 +44,12 @@ jobs:
       IMAGE_TAG: ${{ secrets.DOCKER_REGISTRY }}/wband/web:${{ github.ref_name }}
 
     steps:
-      - name: Login into Docker
-        run: echo "$DOCKER_PASS" | docker login $DOCKER_URL -u "$DOCKER_USER" --password-stdin
+      # - name: Login into Docker
+      #   run: echo "$DOCKER_PASS" | docker login $DOCKER_URL -u "$DOCKER_USER" --password-stdin
 
       - name: Pull the Docker image
         run: docker pull $IMAGE_TAG
 
       - name: Update docker swarm service
         run: docker service update --detach wband_${{ github.ref_name }}_web
+
