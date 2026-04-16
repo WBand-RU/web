@@ -7,21 +7,20 @@ on:
     branches: [ "staging", "release", "develop" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
+    
+    env:
+      DOCKER_URL: ${{ secrets.DOCKER_REGISTRY }}
+      DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASS: ${{ secrets.DOCKER_PASSWORD }}
+      IMAGE_TAG: ${{ secrets.DOCKER_REGISTRY }}/wband/web:${{ github.ref_name }}
+      IMAGE_RUN_NUMBER_TAG: ${{ secrets.DOCKER_REGISTRY }}/wband/web:$GITHUB_RUN_NUMBER
 
     steps:
     - uses: actions/checkout@v4
 
     - name: Login into Docker
-      env:
-        DOCKER_URL: ${{ secrets.DOCKER_REGISTRY }}
-        DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASS: ${{ secrets.DOCKER_PASSWORD }}
-        IMAGE_TAG: ${{ secrets.DOCKER_REGISTRY }}/wband/web:${{ github.ref_name }}
-        IMAGE_RUN_NUMBER_TAG: ${{ secrets.DOCKER_REGISTRY }}/wband/web:$GITHUB_RUN_NUMBER
       run: echo "$DOCKER_PASS" | docker login $DOCKER_URL -u "$DOCKER_USER" --password-stdin
     
     - name: Build the Docker image
