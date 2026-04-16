@@ -30,7 +30,7 @@ jobs:
       run: docker tag $IMAGE_TAG $IMAGE_RUN_NUMBER_TAG
 
     - name: Push the Docker image
-      run: docker push --tag $IMAGE_TAG
+      run: docker push $IMAGE_TAG
     - name: Push the Docker image with run number
-      run: docker push --tag $IMAGE_RUN_NUMBER_TAG
+      run: docker push $IMAGE_RUN_NUMBER_TAG
       
